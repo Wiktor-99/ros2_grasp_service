@@ -27,6 +27,9 @@ class GraspService(Node):
         self.positions_to_home = [ self.get_parameter(f'positions_to_home_postion.{position_to_target}').get_parameter_value().double_array_value for position_to_target in self.positions_to_home_postion_list]
         self.times_for_postions_to_home = [ self.get_parameter(f'times_for_postions_to_home_postion.{position_to_target}').get_parameter_value().double_value for position_to_target in self.positions_to_home_postion_list]
 
+        self.log_parameters()
+
+    def log_parameters(self):
         self.get_logger().info(f'Got joint {self.joints_names}')
         self.get_logger().info(f'Got postions {self.positions_to_target_list}')
         self.get_logger().info(f'Got positions to target {self.positions_to_target}')
