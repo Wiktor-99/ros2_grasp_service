@@ -8,7 +8,7 @@ from control_msgs.action import FollowJointTrajectory
 from action_msgs.msg import GoalStatus
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 from builtin_interfaces.msg import Duration
-
+from time import sleep
 
 class FollowJointTrajectoryActionClient(Node):
     def __init__(self):
@@ -134,6 +134,18 @@ class GraspService(Node):
 
     def grasp(self, request, response):
         self.get_logger().info('Trigger received. Grasp sequence will be started.')
+
+        self.joint_trajectory_action_client.send_goal(
+            self.create_trajectory_goal(self.positions_to_target, self.times_for_postions_to_target))
+        while self.joint_trajectory_action_client.status != GoalStatus.STATUS_SUCCEEDED:
+            spin_once(self.joint_trajectory_action_client)
+
+        sleep(self.time_to_wait_on_target)
+
+        self.joint_trajectory_action_client.send_goal(
+            self.create_trajectory_goal(self.positions_to_home, self.times_for_postions_to_home))
+        while self.joint_trajectory_action_client.status != GoalStatus.STATUS_SUCCEEDED:
+            spin_once(self.joint_trajectory_action_client)
 
 
 def main(args=None):
