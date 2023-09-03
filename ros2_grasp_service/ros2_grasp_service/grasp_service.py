@@ -1,5 +1,6 @@
 from rclpy import init, spin, shutdown, Parameter
 from rclpy.node import Node
+from rclpy.parameter import Parameter
 from std_srvs.srv import Empty
 from rclpy.executors import MultiThreadedExecutor
 
@@ -10,16 +11,42 @@ class GraspService(Node):
         self.service = self.create_service(Empty, 'grasp_service', self.grasp)
         self.declare_initial_parameters()
         self.get_initial_parameters()
-
-        self.declar_times_and_postions_parameters_from_list('times_for_postions_to_target', 'positions_to_target', self.positions_to_target_list)
-        self.declar_times_and_postions_parameters_from_list('times_for_postions_to_home', 'positions_to_home', self.positions_to_home_list)
-
-        self.positions_to_target = [ self.get_parameter(f'positions_to_target.{position_to_target}').get_parameter_value().double_array_value for position_to_target in self.positions_to_target_list]
-        self.times_for_postions_to_target = [ self.get_parameter(f'times_for_postions_to_target.{position_to_target}').get_parameter_value().double_value for position_to_target in self.positions_to_target_list]
-
-        self.positions_to_home = [ self.get_parameter(f'positions_to_home.{position_to_target}').get_parameter_value().double_array_value for position_to_target in self.positions_to_home_list]
-        self.times_for_postions_to_home = [ self.get_parameter(f'times_for_postions_to_home.{position_to_target}').get_parameter_value().double_value for position_to_target in self.positions_to_home_list]
+        self.declare_nested_parameters()
+        self.get_nested_parameters()
         self.log_parameters()
+
+    def declare_nested_parameters(self):
+        self.declar_times_and_postions_parameters_from_list(
+            'times_for_postions_to_target',
+            'positions_to_target',
+            self.positions_to_target_list)
+        self.declar_times_and_postions_parameters_from_list(
+            'times_for_postions_to_home',
+            'positions_to_home',
+            self.positions_to_home_list)
+
+    def get_nested_parameters(self):
+        self.positions_to_target = self.get_nested_parameter(
+            'positions_to_target',
+            self.positions_to_target_list)
+
+        self.times_for_postions_to_target = self.get_nested_parameter(
+            'times_for_postions_to_target',
+            self.positions_to_target_list)
+
+        self.positions_to_home = self.get_nested_parameter(
+            'positions_to_home',
+            self.positions_to_home_list)
+
+        self.times_for_postions_to_home = self.get_nested_parameter(
+            'times_for_postions_to_home',
+            self.positions_to_home_list)
+
+    def get_nested_parameter(self, primary_key_name, nested_keys_names_list):
+        return [ self.get_parameter(f'{primary_key_name}.{nested_key_name}').get_parameter_value().double_array_value
+                 for nested_key_name
+                 in nested_keys_names_list]
+
 
     def get_initial_parameters(self):
         self.joints_names = self.get_parameter('joints_names').get_parameter_value().string_array_value
