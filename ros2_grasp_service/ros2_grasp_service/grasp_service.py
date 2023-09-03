@@ -3,12 +3,41 @@ from rclpy.node import Node
 from rclpy.parameter import Parameter
 from std_srvs.srv import Empty
 from rclpy.executors import MultiThreadedExecutor
+from rclpy.action import ActionClient
+from control_msgs.action import FollowJointTrajectory
+from action_msgs.msg import GoalStatus
+
+
+class FollowJointTrajectoryActionClient(Node):
+    def __init__(self):
+        super().__init__('send_trajectory_service')
+        self._action_client = ActionClient(self, FollowJointTrajectory, '/joint_trajectory_controller/follow_joint_trajectory')
+        self.status = GoalStatus.STATUS_EXECUTING
+
+    def send_goal(self, goal_msg):
+        self.status = GoalStatus.STATUS_EXECUTING
+        self._action_client.wait_for_server()
+        self._send_goal_future = self._action_client.send_goal_async(goal_msg)
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            return
+
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
+    def get_result_callback(self, future):
+        result = future.result().result
+        self.status = GoalStatus.STATUS_SUCCEEDED
 
 
 class GraspService(Node):
     def __init__(self):
         super().__init__('grasp_service')
         self.service = self.create_service(Empty, 'grasp_service', self.grasp)
+        self.joint_trajectory_action_client = FollowJointTrajectoryActionClient()
         self.declare_initial_parameters()
         self.get_initial_parameters()
         self.declare_nested_parameters()
