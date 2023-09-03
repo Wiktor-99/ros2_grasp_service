@@ -1,4 +1,4 @@
-from rclpy import init, spin, shutdown, Parameter
+from rclpy import init, spin, shutdown, Parameter, spin_once
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from std_srvs.srv import Empty
@@ -6,6 +6,8 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.action import ActionClient
 from control_msgs.action import FollowJointTrajectory
 from action_msgs.msg import GoalStatus
+from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
+from builtin_interfaces.msg import Duration
 
 
 class FollowJointTrajectoryActionClient(Node):
@@ -55,24 +57,29 @@ class GraspService(Node):
             self.positions_to_home_list)
 
     def get_nested_parameters(self):
-        self.positions_to_target = self.get_nested_parameter(
+        self.positions_to_target = self.get_nested_double_array_parameters(
             'positions_to_target',
             self.positions_to_target_list)
 
-        self.times_for_postions_to_target = self.get_nested_parameter(
+        self.times_for_postions_to_target = self.get_nested_double_parameters(
             'times_for_postions_to_target',
             self.positions_to_target_list)
 
-        self.positions_to_home = self.get_nested_parameter(
+        self.positions_to_home = self.get_nested_double_array_parameters(
             'positions_to_home',
             self.positions_to_home_list)
 
-        self.times_for_postions_to_home = self.get_nested_parameter(
+        self.times_for_postions_to_home = self.get_nested_double_parameters(
             'times_for_postions_to_home',
             self.positions_to_home_list)
 
-    def get_nested_parameter(self, primary_key_name, nested_keys_names_list):
+    def get_nested_double_array_parameters(self, primary_key_name, nested_keys_names_list):
         return [ self.get_parameter(f'{primary_key_name}.{nested_key_name}').get_parameter_value().double_array_value
+                 for nested_key_name
+                 in nested_keys_names_list]
+
+    def get_nested_double_parameters(self, primary_key_name, nested_keys_names_list):
+        return [ self.get_parameter(f'{primary_key_name}.{nested_key_name}').get_parameter_value().integer_value
                  for nested_key_name
                  in nested_keys_names_list]
 
@@ -106,8 +113,24 @@ class GraspService(Node):
     def declar_times_and_postions_parameters_from_list(self, times_prefix, position_prefix, list_of_parameters):
         for position in list_of_parameters:
             self.get_logger().info(f'{position_prefix}.{position}')
-            self.declare_parameter(f'{times_prefix}.{position}', Parameter.Type.DOUBLE)
+            self.declare_parameter(f'{times_prefix}.{position}', Parameter.Type.INTEGER)
             self.declare_parameter(f'{position_prefix}.{position}', Parameter.Type.DOUBLE_ARRAY)
+
+    def create_trajectory_goal(self, points, time_in_sec):
+        trajectory = JointTrajectory()
+        trajectory.joint_names = self.joints_names
+        result_points = []
+        for i in range(len(points)):
+            point = JointTrajectoryPoint()
+            point.positions = points[i]
+            point.time_from_start = Duration(sec=time_in_sec[i])
+            result_points += [point]
+
+        trajectory.points = result_points
+        goal_msg = FollowJointTrajectory.Goal()
+        goal_msg.trajectory = trajectory
+
+        return goal_msg
 
     def grasp(self, request, response):
         self.get_logger().info('Trigger received. Grasp sequence will be started.')

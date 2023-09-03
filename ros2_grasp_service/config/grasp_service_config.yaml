@@ -3,6 +3,7 @@ grasp_service:
     joints_names:
       - joint_1
       - joint_2
+      - joint3
 
     positions_to_target_list:
       - FirstPostion
@@ -13,8 +14,8 @@ grasp_service:
       SecondPostion: [0.1, 0.2, 0.3]
 
     times_for_postions_to_target:
-      FirstPostion: 3.0
-      SecondPostion: 4.0
+      FirstPostion: 3
+      SecondPostion: 4
 
     positions_to_home_list:
       - FirstPostion
@@ -25,7 +26,7 @@ grasp_service:
       SecondPostion: [-0.1, -0.2, -0.3]
 
     times_for_postions_to_home:
-      FirstPostion: 122.0
-      SecondPostion: 689.0
+      FirstPostion: 12
+      SecondPostion: 6
 
     time_to_wait_on_target: 5
