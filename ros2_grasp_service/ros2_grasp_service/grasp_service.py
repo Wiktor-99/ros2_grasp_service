@@ -8,15 +8,8 @@ class GraspService(Node):
     def __init__(self):
         super().__init__('grasp_service')
         self.service = self.create_service(Empty, 'grasp_service', self.grasp)
-        self.declare_parameter('joints_names', Parameter.Type.STRING_ARRAY)
-        self.declare_parameter('positions_to_target_list', Parameter.Type.STRING_ARRAY)
-        self.declare_parameter('positions_to_home_list', Parameter.Type.STRING_ARRAY)
-        self.declare_parameter('time_to_wait_on_target', Parameter.Type.INTEGER)
-
-        self.joints_names = self.get_parameter('joints_names').get_parameter_value().string_array_value
-        self.time_to_wait_on_target = self.get_parameter('time_to_wait_on_target').get_parameter_value().integer_value
-        self.positions_to_target_list = self.get_parameter('positions_to_target_list').get_parameter_value().string_array_value
-        self.positions_to_home_list = self.get_parameter('positions_to_home_list').get_parameter_value().string_array_value
+        self.declare_initial_parameters()
+        self.get_initial_parameters()
 
         self.declar_times_and_postions_parameters_from_list('times_for_postions_to_target', 'positions_to_target', self.positions_to_target_list)
         self.declar_times_and_postions_parameters_from_list('times_for_postions_to_home', 'positions_to_home', self.positions_to_home_list)
@@ -26,8 +19,24 @@ class GraspService(Node):
 
         self.positions_to_home = [ self.get_parameter(f'positions_to_home.{position_to_target}').get_parameter_value().double_array_value for position_to_target in self.positions_to_home_list]
         self.times_for_postions_to_home = [ self.get_parameter(f'times_for_postions_to_home.{position_to_target}').get_parameter_value().double_value for position_to_target in self.positions_to_home_list]
-
         self.log_parameters()
+
+    def get_initial_parameters(self):
+        self.joints_names = self.get_parameter('joints_names').get_parameter_value().string_array_value
+        self.time_to_wait_on_target = self.get_parameter('time_to_wait_on_target').get_parameter_value().integer_value
+        self.positions_to_target_list = self.get_parameter('positions_to_target_list').get_parameter_value().string_array_value
+        self.positions_to_home_list = self.get_parameter('positions_to_home_list').get_parameter_value().string_array_value
+
+    def declare_initial_parameters(self):
+        self.declare_parameters(
+            namespace='',
+            parameters=[
+                ('joints_names', Parameter.Type.STRING_ARRAY),
+                ('positions_to_target_list', Parameter.Type.STRING_ARRAY),
+                ('positions_to_target_list', Parameter.Type.STRING_ARRAY),
+                ('positions_to_home_list', Parameter.Type.STRING_ARRAY),
+                ('time_to_wait_on_target', Parameter.Type.INTEGER)
+            ])
 
     def log_parameters(self):
         self.get_logger().info(f'Got joint {self.joints_names}')
