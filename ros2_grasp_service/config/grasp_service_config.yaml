@@ -16,15 +16,15 @@ grasp_service:
       FirstPostion: 3.0
       SecondPostion: 4.0
 
-    positions_to_home_postion_list:
+    positions_to_home_list:
       - FirstPostion
       - SecondPostion
 
-    positions_to_home_postion:
+    positions_to_home:
       FirstPostion: [-0.1, -0.2, -0.3]
       SecondPostion: [-0.1, -0.2, -0.3]
 
-    times_for_postions_to_home_postion:
+    times_for_postions_to_home:
       FirstPostion: 122.0
       SecondPostion: 689.0
 
