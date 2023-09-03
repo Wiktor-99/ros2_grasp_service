@@ -116,17 +116,13 @@ class GraspService(Node):
             self.declare_parameter(f'{times_prefix}.{position}', Parameter.Type.INTEGER)
             self.declare_parameter(f'{position_prefix}.{position}', Parameter.Type.DOUBLE_ARRAY)
 
-    def create_trajectory_goal(self, points, time_in_sec):
+    def create_trajectory_goal(self, array_of_points, times_in_sec):
         trajectory = JointTrajectory()
         trajectory.joint_names = self.joints_names
-        result_points = []
-        for i in range(len(points)):
-            point = JointTrajectoryPoint()
-            point.positions = points[i]
-            point.time_from_start = Duration(sec=time_in_sec[i])
-            result_points += [point]
-
-        trajectory.points = result_points
+        trajectory.points = [
+            JointTrajectoryPoint(positions=points, time_from_start = Duration(sec=time_from_sec))
+            for points, time_from_sec
+            in zip(array_of_points, times_in_sec)]
         goal_msg = FollowJointTrajectory.Goal()
         goal_msg.trajectory = trajectory
 
