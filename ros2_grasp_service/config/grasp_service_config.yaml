@@ -1,32 +1,25 @@
 grasp_service:
   ros__parameters:
     joints_names:
-      - joint_1
-      - joint_2
-      - joint3
+      - joint1
+      - joint2
 
     positions_to_target_list:
       - FirstPostion
-      - SecondPostion
 
     positions_to_target:
-      FirstPostion: [0.1, 0.2, 0.3]
-      SecondPostion: [0.1, 0.2, 0.3]
+      FirstPostion: [0.0, 0.5]
 
-    times_for_postions_to_target:
-      FirstPostion: 3
-      SecondPostion: 4
+    times_for_positions_to_target:
+      FirstPostion: 5
 
     positions_to_home_list:
       - FirstPostion
-      - SecondPostion
 
     positions_to_home:
-      FirstPostion: [-0.1, -0.2, -0.3]
-      SecondPostion: [-0.1, -0.2, -0.3]
+      FirstPostion: [0.0, -0.3]
 
-    times_for_postions_to_home:
-      FirstPostion: 12
-      SecondPostion: 6
+    times_for_positions_to_home:
+      FirstPostion: 10
 
-    time_to_wait_on_target: 5
+    time_to_wait_on_target: 10

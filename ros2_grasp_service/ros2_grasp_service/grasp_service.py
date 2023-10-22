@@ -1,19 +1,23 @@
-from rclpy import init, spin, shutdown, Parameter, spin_once
+from rclpy import init, spin_once, spin, shutdown
+from control_msgs.msg import DynamicJointState
+from control_msgs.action import FollowJointTrajectory
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from std_srvs.srv import Empty
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.action import ActionClient
-from control_msgs.action import FollowJointTrajectory
 from action_msgs.msg import GoalStatus
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 from builtin_interfaces.msg import Duration
 from time import sleep
+import array
+from rclpy.callback_groups import ReentrantCallbackGroup
+import numpy as np
 
 class FollowJointTrajectoryActionClient(Node):
     def __init__(self):
         super().__init__('send_trajectory_service')
-        self._action_client = ActionClient(self, FollowJointTrajectory, '/joint_trajectory_controller/follow_joint_trajectory')
+        self._action_client = ActionClient(self, FollowJointTrajectory, '/joint_trajectory_position_controller/follow_joint_trajectory')
         self.status = GoalStatus.STATUS_EXECUTING
 
     def send_goal(self, goal_msg):
@@ -24,6 +28,7 @@ class FollowJointTrajectoryActionClient(Node):
 
     def goal_response_callback(self, future):
         goal_handle = future.result()
+        self.get_logger().info(f'Goal accepted {goal_handle.accepted}')
         if not goal_handle.accepted:
             return
 
@@ -31,28 +36,35 @@ class FollowJointTrajectoryActionClient(Node):
         self._get_result_future.add_done_callback(self.get_result_callback)
 
     def get_result_callback(self, future):
-        result = future.result().result
+        result = future.info().result
+        self.get_logger().error(f'Call back with status {result}')
         self.status = GoalStatus.STATUS_SUCCEEDED
 
 
 class GraspService(Node):
     def __init__(self):
         super().__init__('grasp_service')
-        self.service = self.create_service(Empty, 'grasp_service', self.grasp)
+        self.group = ReentrantCallbackGroup()
+        self.service = self.create_service(srv_type=Empty, srv_name='grasp_service', callback=self.grasp, callback_group=self.group )
         self.joint_trajectory_action_client = FollowJointTrajectoryActionClient()
         self.declare_initial_parameters()
         self.get_initial_parameters()
         self.declare_nested_parameters()
         self.get_nested_parameters()
         self.log_parameters()
+        self.subscription = self.create_subscription(msg_type=DynamicJointState, topic='dynamic_joint_states', callback=self.listener_callback, qos_profile=10, callback_group=self.group)
+        self.positions = array.array('d', [])
+
+    def listener_callback(self, msg):
+        self.positions = [ i.values[i.interface_names.index('position')] for i in msg.interface_values]
 
     def declare_nested_parameters(self):
-        self.declar_times_and_postions_parameters_from_list(
-            'times_for_postions_to_target',
+        self.declar_times_and_positions_parameters_from_list(
+            'times_for_positions_to_target',
             'positions_to_target',
             self.positions_to_target_list)
-        self.declar_times_and_postions_parameters_from_list(
-            'times_for_postions_to_home',
+        self.declar_times_and_positions_parameters_from_list(
+            'times_for_positions_to_home',
             'positions_to_home',
             self.positions_to_home_list)
 
@@ -61,16 +73,16 @@ class GraspService(Node):
             'positions_to_target',
             self.positions_to_target_list)
 
-        self.times_for_postions_to_target = self.get_nested_double_parameters(
-            'times_for_postions_to_target',
+        self.times_for_positions_to_target = self.get_nested_double_parameters(
+            'times_for_positions_to_target',
             self.positions_to_target_list)
 
         self.positions_to_home = self.get_nested_double_array_parameters(
             'positions_to_home',
             self.positions_to_home_list)
 
-        self.times_for_postions_to_home = self.get_nested_double_parameters(
-            'times_for_postions_to_home',
+        self.times_for_positions_to_home = self.get_nested_double_parameters(
+            'times_for_positions_to_home',
             self.positions_to_home_list)
 
     def get_nested_double_array_parameters(self, primary_key_name, nested_keys_names_list):
@@ -103,14 +115,14 @@ class GraspService(Node):
 
     def log_parameters(self):
         self.get_logger().info(f'Got joint {self.joints_names}')
-        self.get_logger().info(f'Got postions {self.positions_to_target_list}')
+        self.get_logger().info(f'Got positions {self.positions_to_target_list}')
         self.get_logger().info(f'Got positions to target {self.positions_to_target}')
-        self.get_logger().info(f'Got times for positions to target {self.times_for_postions_to_target}')
+        self.get_logger().info(f'Got times for positions to target {self.times_for_positions_to_target}')
         self.get_logger().info(f'Got positions to home {self.positions_to_home}')
-        self.get_logger().info(f'Got times for positions to home {self.times_for_postions_to_home}')
+        self.get_logger().info(f'Got times for positions to home {self.times_for_positions_to_home}')
         self.get_logger().info(f'Got time to wait on target {self.time_to_wait_on_target}')
 
-    def declar_times_and_postions_parameters_from_list(self, times_prefix, position_prefix, list_of_parameters):
+    def declar_times_and_positions_parameters_from_list(self, times_prefix, position_prefix, list_of_parameters):
         for position in list_of_parameters:
             self.get_logger().info(f'{position_prefix}.{position}')
             self.declare_parameter(f'{times_prefix}.{position}', Parameter.Type.INTEGER)
@@ -132,17 +144,21 @@ class GraspService(Node):
         self.get_logger().info('Trigger received. Grasp sequence will be started.')
 
         self.joint_trajectory_action_client.send_goal(
-            self.create_trajectory_goal(self.positions_to_target, self.times_for_postions_to_target))
+            self.create_trajectory_goal(self.positions_to_target, self.times_for_positions_to_target))
         while self.joint_trajectory_action_client.status != GoalStatus.STATUS_SUCCEEDED:
             spin_once(self.joint_trajectory_action_client)
+
+        while not (np.round(self.positions, 2) == np.round(self.positions_to_target[-1], 2)).all():
+            self.get_logger().info(f'Before sleep {np.round(self.positions, 2)}')
 
         sleep(self.time_to_wait_on_target)
 
         self.joint_trajectory_action_client.send_goal(
-            self.create_trajectory_goal(self.positions_to_home, self.times_for_postions_to_home))
+            self.create_trajectory_goal(self.positions_to_home, self.times_for_positions_to_home))
         while self.joint_trajectory_action_client.status != GoalStatus.STATUS_SUCCEEDED:
             spin_once(self.joint_trajectory_action_client)
 
+        return response
 
 def main(args=None):
     init(args=args)
