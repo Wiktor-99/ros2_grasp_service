@@ -3,23 +3,28 @@ grasp_service:
     joints_names:
       - joint1
       - joint2
+      - joint3
+      - joint4
 
     positions_to_target_list:
-      - FirstPostion
+      - first_pos
+      - second_pos
 
     positions_to_target:
-      FirstPostion: [0.0, 0.5]
+      first_pos: [0.50, 0.0, 0.0, 0.0]
+      second_pos: [-0.50, 0.0, 0.0, 0.0]
 
     times_for_positions_to_target:
-      FirstPostion: 5
+      first_pos: 2
+      second_pos: 4
 
     positions_to_home_list:
-      - FirstPostion
+      - first_pos
 
     positions_to_home:
-      FirstPostion: [0.0, -0.3]
+      first_pos: [0.50, 0.0, 0.0, 0.0]
 
     times_for_positions_to_home:
-      FirstPostion: 10
+      first_pos: 2
 
-    time_to_wait_on_target: 10
+    time_to_wait_on_target: 5

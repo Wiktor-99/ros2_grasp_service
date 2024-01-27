@@ -1,23 +1,18 @@
-from rclpy import init, spin_once, spin, shutdown
-from control_msgs.msg import DynamicJointState
+from rclpy import init, spin_once, shutdown, spin
 from control_msgs.action import FollowJointTrajectory
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from std_srvs.srv import Empty
-from rclpy.executors import MultiThreadedExecutor
 from rclpy.action import ActionClient
 from action_msgs.msg import GoalStatus
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 from builtin_interfaces.msg import Duration
 from time import sleep
-import array
-from rclpy.callback_groups import ReentrantCallbackGroup
-import numpy as np
 
 class FollowJointTrajectoryActionClient(Node):
     def __init__(self):
         super().__init__('send_trajectory_service')
-        self._action_client = ActionClient(self, FollowJointTrajectory, '/joint_trajectory_position_controller/follow_joint_trajectory')
+        self._action_client = ActionClient(self, FollowJointTrajectory, '/joint_trajectory_controller/follow_joint_trajectory')
         self.status = GoalStatus.STATUS_EXECUTING
 
     def send_goal(self, goal_msg):
@@ -36,27 +31,21 @@ class FollowJointTrajectoryActionClient(Node):
         self._get_result_future.add_done_callback(self.get_result_callback)
 
     def get_result_callback(self, future):
-        result = future.info().result
-        self.get_logger().error(f'Call back with status {result}')
+        result = future.result().result
+        self.get_logger().info(f'Call back with status {result}')
         self.status = GoalStatus.STATUS_SUCCEEDED
 
 
 class GraspService(Node):
     def __init__(self):
         super().__init__('grasp_service')
-        self.group = ReentrantCallbackGroup()
-        self.service = self.create_service(srv_type=Empty, srv_name='grasp_service', callback=self.grasp, callback_group=self.group )
+        self.service = self.create_service(srv_type=Empty, srv_name='grasp_service', callback=self.grasp)
         self.joint_trajectory_action_client = FollowJointTrajectoryActionClient()
         self.declare_initial_parameters()
         self.get_initial_parameters()
         self.declare_nested_parameters()
         self.get_nested_parameters()
         self.log_parameters()
-        self.subscription = self.create_subscription(msg_type=DynamicJointState, topic='dynamic_joint_states', callback=self.listener_callback, qos_profile=10, callback_group=self.group)
-        self.positions = array.array('d', [])
-
-    def listener_callback(self, msg):
-        self.positions = [ i.values[i.interface_names.index('position')] for i in msg.interface_values]
 
     def declare_nested_parameters(self):
         self.declar_times_and_positions_parameters_from_list(
@@ -135,9 +124,10 @@ class GraspService(Node):
             JointTrajectoryPoint(positions=points, time_from_start = Duration(sec=time_from_sec))
             for points, time_from_sec
             in zip(array_of_points, times_in_sec)]
+
+        trajectory.points.append(JointTrajectoryPoint(positions=array_of_points[-1], time_from_start = Duration(sec=times_in_sec[-1], nanosec=1)))
         goal_msg = FollowJointTrajectory.Goal()
         goal_msg.trajectory = trajectory
-
         return goal_msg
 
     def grasp(self, request, response):
@@ -147,9 +137,6 @@ class GraspService(Node):
             self.create_trajectory_goal(self.positions_to_target, self.times_for_positions_to_target))
         while self.joint_trajectory_action_client.status != GoalStatus.STATUS_SUCCEEDED:
             spin_once(self.joint_trajectory_action_client)
-
-        while not (np.round(self.positions, 2) == np.round(self.positions_to_target[-1], 2)).all():
-            self.get_logger().info(f'Before sleep {np.round(self.positions, 2)}')
 
         sleep(self.time_to_wait_on_target)
 
@@ -162,10 +149,8 @@ class GraspService(Node):
 
 def main(args=None):
     init(args=args)
-    grasp_service = GraspService()
-    spin(grasp_service, MultiThreadedExecutor())
+    spin(GraspService())
     shutdown()
-
 
 if __name__ == '__main__':
     main()

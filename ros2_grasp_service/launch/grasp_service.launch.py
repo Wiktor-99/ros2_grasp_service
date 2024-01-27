@@ -15,7 +15,7 @@ def generate_launch_description():
         Node(
             package='ros2_grasp_service',
             executable='ros2_grasp_service',
-            parameters=[ config ],
+            parameters=[ config, {"use_sim_time": True} ],
             emulate_tty=True
         )
     ])
