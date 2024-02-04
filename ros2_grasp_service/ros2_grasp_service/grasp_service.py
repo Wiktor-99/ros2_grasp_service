@@ -13,15 +13,15 @@ from time import sleep
 class FollowJointTrajectoryActionClient(Node):
     def __init__(self, joints_controller_name):
         super().__init__("send_trajectory_action")
-        self._action_client = ActionClient(
+        self.action_client = ActionClient(
             self, FollowJointTrajectory, f"/{joints_controller_name}/follow_joint_trajectory"
         )
         self.status = GoalStatus.STATUS_EXECUTING
 
     def send_goal(self, goal_msg):
         self.status = GoalStatus.STATUS_EXECUTING
-        self._action_client.wait_for_server()
-        self._send_goal_future = self._action_client.send_goal_async(goal_msg)
+        self.action_client.wait_for_server()
+        self._send_goal_future = self.action_client.send_goal_async(goal_msg)
         self._send_goal_future.add_done_callback(self.goal_response_callback)
 
     def goal_response_callback(self, future):
