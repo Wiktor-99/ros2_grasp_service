@@ -10,9 +10,9 @@ from builtin_interfaces.msg import Duration
 from time import sleep
 
 class FollowJointTrajectoryActionClient(Node):
-    def __init__(self):
-        super().__init__('send_trajectory_service')
-        self._action_client = ActionClient(self, FollowJointTrajectory, '/joint_trajectory_controller/follow_joint_trajectory')
+    def __init__(self, joints_controller_name):
+        super().__init__('send_trajectory_action')
+        self._action_client = ActionClient(self, FollowJointTrajectory, f'/{joints_controller_name}/follow_joint_trajectory')
         self.status = GoalStatus.STATUS_EXECUTING
 
     def send_goal(self, goal_msg):
@@ -39,13 +39,14 @@ class FollowJointTrajectoryActionClient(Node):
 class GraspService(Node):
     def __init__(self):
         super().__init__('grasp_service')
-        self.service = self.create_service(srv_type=Empty, srv_name='grasp_service', callback=self.grasp)
-        self.joint_trajectory_action_client = FollowJointTrajectoryActionClient()
         self.declare_initial_parameters()
         self.get_initial_parameters()
         self.declare_nested_parameters()
         self.get_nested_parameters()
         self.log_parameters()
+
+        self.service = self.create_service(srv_type=Empty, srv_name='grasp_service', callback=self.grasp)
+        self.joint_trajectory_action_client = FollowJointTrajectoryActionClient(self.joints_controller_name)
 
     def declare_nested_parameters(self):
         self.declar_times_and_positions_parameters_from_list(
@@ -86,6 +87,7 @@ class GraspService(Node):
 
 
     def get_initial_parameters(self):
+        self.joints_controller_name = self.get_parameter('joints_controller_name').get_parameter_value().string_value
         self.joints_names = self.get_parameter('joints_names').get_parameter_value().string_array_value
         self.time_to_wait_on_target = self.get_parameter('time_to_wait_on_target').get_parameter_value().integer_value
         self.positions_to_target_list = self.get_parameter('positions_to_target_list').get_parameter_value().string_array_value
@@ -95,6 +97,7 @@ class GraspService(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
+                ('joints_controller_name', Parameter.Type.STRING),
                 ('joints_names', Parameter.Type.STRING_ARRAY),
                 ('positions_to_target_list', Parameter.Type.STRING_ARRAY),
                 ('positions_to_target_list', Parameter.Type.STRING_ARRAY),

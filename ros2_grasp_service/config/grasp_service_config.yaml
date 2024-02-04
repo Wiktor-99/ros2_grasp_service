@@ -1,5 +1,6 @@
 grasp_service:
   ros__parameters:
+    joints_controller_name: joint_trajectory_controller
     joints_names:
       - joint1
       - joint2
