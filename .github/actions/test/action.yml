@@ -1,6 +1,7 @@
-name: 'Test'
-description: 'Test using devcontainer'
+---
+name: Test
+description: Test using devcontainer
 runs:
-  using: 'docker'
-  image: '../../../.devcontainer/Dockerfile'
-  entrypoint: ".github/actions/test/run.sh"
+    using: docker
+    image: ../../../.devcontainer/Dockerfile
+    entrypoint: .github/actions/test/run.sh
