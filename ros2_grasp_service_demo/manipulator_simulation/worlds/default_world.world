@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="default">
+    <gui>
+      <camera name="user_camera">
+        <pose>-2.0 0.0 3.0 0.0 0.8 0.0</pose>
+      </camera>
+    </gui>
+    <include>
+      <scale>3.0</scale>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <scale>3.0</scale>
+      <uri>model://asphalt_plane</uri>
+    </include>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <include>
+      <scale>1.0</scale>
+      <uri>model://big_box</uri>
+      <name>big_box_0</name>
+      <pose>-7.0 -2.0 0.0 0 0 0</pose>
+    </include>
+
+    <include>
+      <scale>1.0</scale>
+      <uri>model://big_box</uri>
+      <name>big_box_1</name>
+      <pose>-2.0 -2.0 0.0 0 0 0</pose>
+    </include>
+  </world>
+</sdf>

@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ros2_grasp_service</name>
+  <name>open_manipulator_control</name>
   <version>1.0.0</version>
-  <description>Simple grasp service</description>
+  <description>Configuration of ros2_control package for open_manipulator</description>
   <maintainer email="wiktorbajor1@gmail.com">Wiktor Bajor</maintainer>
-  <license>Apache-2.0</license>
+  <license>Apache License 2.0</license>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
