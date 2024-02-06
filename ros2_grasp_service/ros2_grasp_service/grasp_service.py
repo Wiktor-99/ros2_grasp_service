@@ -1,5 +1,5 @@
 from rclpy import init, spin_once, shutdown, spin
-from control_msgs.action import FollowJointTrajectory
+from control_msgs.action import FollowJointTrajectory, GripperCommand
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from std_srvs.srv import Empty
@@ -39,6 +39,33 @@ class FollowJointTrajectoryActionClient(Node):
         self.status = GoalStatus.STATUS_SUCCEEDED
 
 
+class GripperActionClient(Node):
+    def __init__(self):
+        super().__init__("gripper_action")
+        self.action_client = ActionClient(self, GripperCommand, "/gripper_action_controller/gripper_cmd")
+        self.status = GoalStatus.STATUS_EXECUTING
+
+    def send_goal(self, goal_msg):
+        self.status = GoalStatus.STATUS_EXECUTING
+        self.action_client.wait_for_server()
+        self._send_goal_future = self.action_client.send_goal_async(goal_msg)
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+        self.get_logger().info(f"Goal accepted {goal_handle.accepted}")
+        if not goal_handle.accepted:
+            return
+
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
+    def get_result_callback(self, future):
+        result = future.result().result
+        self.get_logger().info(f"Call back with status {result}")
+        self.status = GoalStatus.STATUS_SUCCEEDED
+
+
 class GraspService(Node):
     def __init__(self):
         super().__init__("grasp_service")
@@ -50,6 +77,7 @@ class GraspService(Node):
 
         self.service = self.create_service(srv_type=Empty, srv_name="grasp_service", callback=self.grasp)
         self.joint_trajectory_action_client = FollowJointTrajectoryActionClient(self.joints_controller_name)
+        self.gripper_action = GripperActionClient()
 
     def declare_nested_parameters(self):
         self.declar_times_and_positions_parameters_from_list(
@@ -98,6 +126,8 @@ class GraspService(Node):
         self.positions_to_home_list = (
             self.get_parameter("positions_to_home_list").get_parameter_value().string_array_value
         )
+        self.gripper_close_position = self.get_parameter("gripper_close").get_parameter_value().double_value
+        self.gripper_open_position = self.get_parameter("gripper_open").get_parameter_value().double_value
 
     def declare_initial_parameters(self):
         self.declare_parameters(
@@ -109,6 +139,8 @@ class GraspService(Node):
                 ("positions_to_target_list", Parameter.Type.STRING_ARRAY),
                 ("positions_to_home_list", Parameter.Type.STRING_ARRAY),
                 ("time_to_wait_on_target", Parameter.Type.INTEGER),
+                ("gripper_close", Parameter.Type.DOUBLE),
+                ("gripper_open", Parameter.Type.DOUBLE),
             ],
         )
 
@@ -144,6 +176,12 @@ class GraspService(Node):
         goal_msg.trajectory = trajectory
         return goal_msg
 
+    def create_gripper_msg(self, gripper_value):
+        msg = GripperCommand.Goal()
+        msg.command.position = gripper_value
+
+        return msg
+
     def grasp(self, request, response):
         self.get_logger().info("Trigger received. Grasp sequence will be started.")
 
@@ -153,6 +191,10 @@ class GraspService(Node):
         while self.joint_trajectory_action_client.status != GoalStatus.STATUS_SUCCEEDED:
             spin_once(self.joint_trajectory_action_client)
 
+        self.gripper_action.send_goal(self.create_gripper_msg(self.gripper_close_position))
+        while self.gripper_action.status != GoalStatus.STATUS_SUCCEEDED:
+            spin_once(self.gripper_action)
+
         sleep(self.time_to_wait_on_target)
 
         self.joint_trajectory_action_client.send_goal(
@@ -160,6 +202,10 @@ class GraspService(Node):
         )
         while self.joint_trajectory_action_client.status != GoalStatus.STATUS_SUCCEEDED:
             spin_once(self.joint_trajectory_action_client)
+
+        self.gripper_action.send_goal(self.create_gripper_msg(self.gripper_open_position))
+        while self.gripper_action.status != GoalStatus.STATUS_SUCCEEDED:
+            spin_once(self.gripper_action)
 
         return response
 

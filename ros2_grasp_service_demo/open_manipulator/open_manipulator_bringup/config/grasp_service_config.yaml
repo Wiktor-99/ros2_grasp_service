@@ -29,3 +29,6 @@ grasp_service:
       first_pos: 2
 
     time_to_wait_on_target: 5
+
+    gripper_close: -0.01
+    gripper_open: 0.019
