@@ -30,5 +30,6 @@ grasp_service:
 
     time_to_wait_on_target: 5
 
+    gripper_controller_name: gripper_action_controller
     gripper_close: -0.01
     gripper_open: 0.019

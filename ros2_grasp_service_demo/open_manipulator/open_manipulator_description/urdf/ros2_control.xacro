@@ -28,14 +28,11 @@
     <xacro:manipulator_joint_command_by_position name="joint4" initial_value="0"/>
     <joint name="gripper">
         <command_interface name="position"/>
-        <command_interface name="velocity"/>
         <state_interface name="position"/>
-        <state_interface name="velocity"/>
       </joint>
     <joint name="gripper_sub">
         <param name="mimic">gripper</param>
         <param name="multiplier">1</param>
-        <command_interface name="velocity"/>
         <state_interface name="position"/>
     </joint>
   </ros2_control>
