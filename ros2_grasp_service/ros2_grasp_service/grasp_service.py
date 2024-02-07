@@ -40,9 +40,9 @@ class FollowJointTrajectoryActionClient(Node):
 
 
 class GripperActionClient(Node):
-    def __init__(self):
+    def __init__(self, gripper_controller_name):
         super().__init__("gripper_action")
-        self.action_client = ActionClient(self, GripperCommand, "/gripper_action_controller/gripper_cmd")
+        self.action_client = ActionClient(self, GripperCommand, f"/{gripper_controller_name}/gripper_cmd")
         self.status = GoalStatus.STATUS_EXECUTING
 
     def send_goal(self, goal_msg):
@@ -77,7 +77,7 @@ class GraspService(Node):
 
         self.service = self.create_service(srv_type=Empty, srv_name="grasp_service", callback=self.grasp)
         self.joint_trajectory_action_client = FollowJointTrajectoryActionClient(self.joints_controller_name)
-        self.gripper_action = GripperActionClient()
+        self.gripper_action = GripperActionClient(self.gripper_controller_name)
 
     def declare_nested_parameters(self):
         self.declar_times_and_positions_parameters_from_list(
@@ -128,6 +128,7 @@ class GraspService(Node):
         )
         self.gripper_close_position = self.get_parameter("gripper_close").get_parameter_value().double_value
         self.gripper_open_position = self.get_parameter("gripper_open").get_parameter_value().double_value
+        self.gripper_controller_name = self.get_parameter("gripper_controller_name").get_parameter_value().string_value
 
     def declare_initial_parameters(self):
         self.declare_parameters(
