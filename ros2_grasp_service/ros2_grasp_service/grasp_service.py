@@ -142,6 +142,7 @@ class GraspService(Node):
                 ("time_to_wait_on_target", Parameter.Type.INTEGER),
                 ("gripper_close", Parameter.Type.DOUBLE),
                 ("gripper_open", Parameter.Type.DOUBLE),
+                ("gripper_controller_name", Parameter.Type.STRING),
             ],
         )
 
@@ -183,30 +184,26 @@ class GraspService(Node):
 
         return msg
 
-    def grasp(self, request, response):
-        self.get_logger().info("Trigger received. Grasp sequence will be started.")
-
-        self.joint_trajectory_action_client.send_goal(
-            self.create_trajectory_goal(self.positions_to_target, self.times_for_positions_to_target)
-        )
+    def go_to_pose(self, array_of_points, times_in_sec):
+        self.joint_trajectory_action_client.send_goal(self.create_trajectory_goal(array_of_points, times_in_sec))
         while self.joint_trajectory_action_client.status != GoalStatus.STATUS_SUCCEEDED:
             spin_once(self.joint_trajectory_action_client)
 
-        self.gripper_action.send_goal(self.create_gripper_msg(self.gripper_close_position))
+    def set_gripper_postion(self, gripper_postion):
+        self.gripper_action.send_goal(self.create_gripper_msg(gripper_postion))
         while self.gripper_action.status != GoalStatus.STATUS_SUCCEEDED:
             spin_once(self.gripper_action)
+
+    def grasp(self, request, response):
+        self.get_logger().error("Trigger received. Grasp sequence will be started.")
+
+        self.go_to_pose(self.positions_to_target, self.times_for_positions_to_target)
+        self.set_gripper_postion(self.gripper_close_position)
 
         sleep(self.time_to_wait_on_target)
 
-        self.joint_trajectory_action_client.send_goal(
-            self.create_trajectory_goal(self.positions_to_home, self.times_for_positions_to_home)
-        )
-        while self.joint_trajectory_action_client.status != GoalStatus.STATUS_SUCCEEDED:
-            spin_once(self.joint_trajectory_action_client)
-
-        self.gripper_action.send_goal(self.create_gripper_msg(self.gripper_open_position))
-        while self.gripper_action.status != GoalStatus.STATUS_SUCCEEDED:
-            spin_once(self.gripper_action)
+        self.go_to_pose(self.positions_to_home, self.times_for_positions_to_home)
+        self.set_gripper_postion(self.gripper_open_position)
 
         return response
 
