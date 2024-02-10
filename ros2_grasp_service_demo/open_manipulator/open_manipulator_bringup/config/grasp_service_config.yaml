@@ -12,21 +12,20 @@ grasp_service:
       - second_pos
 
     positions_to_target:
-      first_pos: [0.50, 0.0, 0.0, 0.0]
-      second_pos: [-0.50, 0.0, 0.0, 0.0]
-
-    times_for_positions_to_target:
-      first_pos: 2
-      second_pos: 4
+      first_pos:
+        positions: [0.50, 0.0, 0.0, 0.0]
+        time_to_target: 2
+      second_pos:
+        positions: [-0.50, 0.0, 0.0, 0.0]
+        time_to_target: 4
 
     positions_to_home_list:
       - first_pos
 
     positions_to_home:
-      first_pos: [0.50, 0.0, 0.0, 0.0]
-
-    times_for_positions_to_home:
-      first_pos: 2
+      first_pos:
+        positions: [0.50, 0.0, 0.0, 0.0]
+        time_to_target: 2
 
     time_to_wait_on_target: 5
 

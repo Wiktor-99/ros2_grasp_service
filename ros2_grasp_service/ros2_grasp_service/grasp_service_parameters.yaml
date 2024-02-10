@@ -1,0 +1,50 @@
+grasp_service_parameters:
+  joints_names: {
+    type: string_array,
+  }
+
+  positions_to_target_list: {
+    type: string_array,
+  }
+
+  positions_to_target:
+    __map_positions_to_target_list:
+      positions: {
+        type: double_array,
+      }
+      time_to_target: {
+        type: int,
+      }
+
+  positions_to_home_list: {
+    type: string_array,
+  }
+
+  positions_to_home:
+    __map_positions_to_home_list:
+      positions: {
+        type: double_array,
+      }
+      time_to_target: {
+        type: int,
+      }
+
+  time_to_wait_on_target: {
+    type: int,
+  }
+
+  joints_controller_name: {
+    type: string,
+  }
+
+  gripper_controller_name: {
+    type: string,
+  }
+
+  gripper_close: {
+    type: double,
+  }
+
+  gripper_open: {
+    type: double,
+  }

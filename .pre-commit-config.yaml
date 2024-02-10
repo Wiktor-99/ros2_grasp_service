@@ -36,7 +36,7 @@ repos:
       rev: 6.1.0
       hooks:
         - id: flake8
-          args: ["--ignore=E501,W503,E203"] # ignore too long line and line break before binary operator
+          args: ["--ignore=E501,W503,E203", "--exclude=grasp_service_parameters.py"]
 
     - repo: https://github.com/PyCQA/doc8
       rev: v1.1.1

@@ -1,8 +1,11 @@
+from generate_parameter_library_py.setup_helper import generate_parameter_module
 from setuptools import find_packages, setup
-import os
 from glob import glob
+import os
 
 package_name = "ros2_grasp_service"
+
+generate_parameter_module("grasp_service_parameters", "ros2_grasp_service/grasp_service_parameters.yaml")
 
 setup(
     name=package_name,
