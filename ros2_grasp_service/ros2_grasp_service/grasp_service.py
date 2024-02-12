@@ -103,13 +103,22 @@ class GraspService(Node):
         self.get_logger().info(f"Got gripper_close {self.params.gripper_close}")
         self.get_logger().info(f"Got gripper_open {self.params.gripper_open}")
 
+    def get_time_for_position(self, list_of_position, map_of_position, target_position):
+        time_to_target_postion = 0
+        for position in list_of_position:
+            time_to_target_postion += map_of_position.get_entry(position).time_to_target
+            if position == target_position:
+                return time_to_target_postion
+
+        return time_to_target_postion
+
     def create_trajectory_goal(self, list_of_position, map_of_positions):
         trajectory = JointTrajectory()
         trajectory.joint_names = self.params.joints_names
         trajectory.points = [
             JointTrajectoryPoint(
                 positions=map_of_positions.get_entry(positions).positions,
-                time_from_start=Duration(sec=map_of_positions.get_entry(positions).time_to_target),
+                time_from_start=Duration(sec=self.get_time_for_position(list_of_position, map_of_positions, positions)),
             )
             for positions in list_of_position
         ]
@@ -118,7 +127,7 @@ class GraspService(Node):
             JointTrajectoryPoint(
                 positions=map_of_positions.get_entry(list_of_position[-1]).positions,
                 time_from_start=Duration(
-                    sec=map_of_positions.get_entry(list_of_position[-1]).time_to_target, nanosec=1
+                    sec=self.get_time_for_position(list_of_position, map_of_positions, list_of_position[-1]), nanosec=1
                 ),
             )
         )
@@ -143,7 +152,7 @@ class GraspService(Node):
             spin_once(self.gripper_action)
 
     def grasp(self, request, response):
-        self.get_logger().error("Trigger received. Grasp sequence will be started.")
+        self.get_logger().info("Trigger received. Grasp sequence will be started.")
 
         self.go_to_pose(self.params.positions_to_target_list, self.params.positions_to_target)
         self.set_gripper_postion(self.params.gripper_close)

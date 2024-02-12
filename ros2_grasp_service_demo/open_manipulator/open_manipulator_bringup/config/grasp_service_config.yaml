@@ -17,7 +17,7 @@ grasp_service:
         time_to_target: 2
       second_pos:
         positions: [-0.50, 0.0, 0.0, 0.0]
-        time_to_target: 4
+        time_to_target: 2
 
     positions_to_home_list:
       - first_pos
