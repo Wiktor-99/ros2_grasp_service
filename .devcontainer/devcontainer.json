@@ -20,15 +20,15 @@
 		"--device=/dev/dri"
 	],
 	"containerEnv": {
-		"DISPLAY": "${localEnv:DISPLAY}", // Needed for GUI try ":0" for windows
+		"DISPLAY": "${localEnv:DISPLAY}",
 		"WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
 		"XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}",
 		"PULSE_SERVER": "${localEnv:PULSE_SERVER}",
-		"LIBGL_ALWAYS_SOFTWARE": "1", // Needed for software rendering of opengl
+		"LIBGL_ALWAYS_SOFTWARE": "1",
 		"NVIDIA_DRIVER_CAPABILITIES": "all",
 		"NVIDIA_VISIBLE_DEVICES": "all",
 		"QT_X11_NO_MITSHM": "1",
-		"RMW_IMPLEMENTATION":"rmw_cyclonedds_cpp"
+		"RMW_IMPLEMENTATION": "rmw_cyclonedds_cpp"
 	},
 	// Set *default* container specific settings.json values on container create.
 	"customizations": {
