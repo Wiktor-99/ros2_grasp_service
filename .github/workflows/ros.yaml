@@ -8,6 +8,7 @@ on:
             - foxy*
             - humble*
             - iron*
+            - rolling
             - main
     workflow_dispatch:
 
