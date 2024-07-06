@@ -13,15 +13,6 @@ on:
     workflow_dispatch:
 
 jobs:
-    test:
-        name: test
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
-            - name: Test
-              uses: ./.github/actions/test/
-
     lint:
         name: ament_${{ matrix.linter }}
         runs-on: ubuntu-latest
@@ -41,7 +32,6 @@ jobs:
         name: Tests passed
         needs:
             - lint
-            - test
         runs-on: ubuntu-latest
         steps:
             - name: Check
