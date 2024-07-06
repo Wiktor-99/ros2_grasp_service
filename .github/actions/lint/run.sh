@@ -2,4 +2,4 @@
 set -e
 
 ./setup.sh
-ament_${LINTER} src/
+ament_${LINTER} .
