@@ -2,4 +2,4 @@
 set -e
 
 rosdep update
-rosdep install --from-paths src --ignore-src -y
+rosdep install --from-paths . --ignore-src -y
