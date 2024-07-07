@@ -3,7 +3,7 @@
 <package format="3">
   <name>manipulator_simulation</name>
   <version>1.0.0</version>
-  <description>Gazebo simulation package for OpenManipulator an custom 6DoF manipulator</description>
+  <description>Gazebo simulation package for OpenManipulator.</description>
   <maintainer email="wiktorbajor1@gmail.com">Wiktor Bajor</maintainer>
   <license>Apache License 2.0</license>
 

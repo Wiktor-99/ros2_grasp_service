@@ -16,6 +16,8 @@ jobs:
     lint:
         name: ament_${{ matrix.linter }}
         runs-on: ubuntu-latest
+        container:
+            image: ubuntu:jammy
         strategy:
             fail-fast: false
             matrix:
@@ -27,12 +29,3 @@ jobs:
               uses: ./.github/actions/lint/
               env:
                   LINTER: ${{ matrix.linter }}
-
-    complete:
-        name: Tests passed
-        needs:
-            - lint
-        runs-on: ubuntu-latest
-        steps:
-            - name: Check
-              run: echo "Completed successfully!"
