@@ -53,3 +53,24 @@ And to trigger grasp_service just call:
 ```bash
 ros2 service call grasp_service std_srvs/srv/Empty
 ```
+
+# Setup
+You can clone it and run in docker devcontainer or use native setup. Docker container is setup with all dependencies.
+
+To setup with docker devcontainer:
+
+```bash
+./build.sh &&
+source install/setup.bash
+```
+
+To setup it without docker:
+
+```bash
+mkdir -p ~/ros_ws/ && cd ~/ros_ws/src
+git clone https://github.com/Wiktor-99/ros2_grasp_service.git
+cd ..
+rosdep install --from-paths src --ignore-src -r -y
+./build.sh
+. install/setup.bash
+```
