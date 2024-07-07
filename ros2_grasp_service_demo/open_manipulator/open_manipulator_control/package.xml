@@ -7,10 +7,12 @@
   <maintainer email="wiktorbajor1@gmail.com">Wiktor Bajor</maintainer>
   <license>Apache License 2.0</license>
 
-  <test_depend>ament_copyright</test_depend>
-  <test_depend>ament_flake8</test_depend>
-  <test_depend>ament_pep257</test_depend>
-  <test_depend>python3-pytest</test_depend>
+  <depend>xacro</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>ros2_control</depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>

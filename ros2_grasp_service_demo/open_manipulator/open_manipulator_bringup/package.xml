@@ -7,6 +7,10 @@
   <maintainer email="wiktorbajor1@gmail.com">Wiktor Bajor</maintainer>
   <license>Apache License 2.0</license>
 
+  <depend>xacro</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>ros2_grasp_service</depend>
+
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
