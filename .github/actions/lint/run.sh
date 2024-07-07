@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+sudo apt-get update
 ./setup.sh
 
 if [[ "ament_flake8" == "ament_${LINTER}" ]]; then
