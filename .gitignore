@@ -2,3 +2,5 @@ build/*
 install/*
 log/*
 site/*
+__pycache__/
+*.py[cod]

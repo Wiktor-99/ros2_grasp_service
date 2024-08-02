@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot name="open_manipulator" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find open_manipulator_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/urdf/open_manipulator.xacro" />
+  <xacro:include filename="$(find open_manipulator_description)/urdf/ros2_control.xacro" />
+
+  <xacro:property name="base_link_height" value="0.3"/>
+  <xacro:property name="base_link_radius" value="0.3"/>
+  <xacro:property name="offset_from_ground_to_base_link" value="${base_link_height/2 + 0.05}"/>
+  <xacro:property name="offset_from_base_link_link1" value="${base_link_height/2 + 0.01}"/>
+
+  <link name="world"/>
+  <link name="base_link">
+      <visual>
+        <geometry>
+          <cylinder length="${base_link_height}" radius="${base_link_radius}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder length="${base_link_height}" radius="${base_link_radius}"/>
+        </geometry>
+      </collision>
+   </link>
+
+  <joint name="world_fixed" type="fixed">
+    <origin xyz="0 0 ${offset_from_ground_to_base_link}" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="base_link"/>
+  </joint>
+
+  <joint name="based_fixed" type="fixed">
+    <origin xyz="0 0 ${offset_from_base_link_link1}" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="link1"/>
+  </joint>
+
+  <link name="gripper_sub_mimic_link"/>
+  <joint name="gripper_sub_mimic" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="gripper_sub_mimic_link"/>
+  </joint>
+</robot>

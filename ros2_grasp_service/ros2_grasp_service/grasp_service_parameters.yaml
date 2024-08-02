@@ -1,0 +1,98 @@
+grasp_service_parameters:
+  joints_names: {
+    type: string_array,
+    description: "Names of joints controlled by joint trajectory controller.",
+    validation: {
+      size_gt<>: [0],
+      unique<>: null
+    }
+  }
+
+  positions_to_target_list: {
+    type: string_array,
+    description: "Names of positions to target.",
+    validation: {
+      size_gt<>: [0],
+      unique<>: null
+    }
+  }
+
+  positions_to_target:
+    __map_positions_to_target_list:
+      positions: {
+        type: double_array,
+        description: "List of joints value for given position.",
+        validation: {
+          size_gt<>: [0]
+        }
+      }
+      time_to_target: {
+        type: int,
+        description: "Time for given position",
+        validation: {
+          gt<>: [0]
+        }
+      }
+
+  positions_to_home_list: {
+    type: string_array,
+    description: "Names of positions to target.",
+    validation: {
+      unique<>: null,
+      size_gt<>: [0],
+    }
+  }
+
+  positions_to_home:
+    __map_positions_to_home_list:
+      positions: {
+        type: double_array,
+        description: "List of joints value for given position.",
+        validation: {
+          size_gt<>: [0]
+        }
+      }
+      time_to_target: {
+        type: int,
+        description: "Time for given position",
+        validation: {
+          gt<>: [0]
+        }
+      }
+
+  time_to_wait_on_target: {
+    type: int,
+    default_value: 0,
+    read_only: true,
+    description: "Time to wait on target position.",
+    validation: {
+      gt<>: [-1]
+    }
+
+  }
+
+  joints_controller_name: {
+    type: string,
+    description: "Name of joints trajectory controller",
+    validation: {
+      not_empty<>: []
+    }
+  }
+
+  gripper_controller_name: {
+    type: string,
+    description: "Name of gripper controller",
+    validation: {
+      not_empty<>: []
+    }
+  }
+
+  gripper_close: {
+    type: double,
+    description: "Position of closed gripper"
+  }
+
+  gripper_open: {
+    type: double,
+    description: "Position of open gripper"
+  }

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>open_manipulator_description</name>
+  <version>1.0.0</version>
+  <description>Description in URDF format of OpenManipulator</description>
+  <maintainer email="wiktorbajor1@gmail.com">Wiktor Bajor</maintainer>
+  <license>Apache License 2.0</license>
+
+  <depend>xacro</depend>
+  <depend>robot_state_publisher</depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
