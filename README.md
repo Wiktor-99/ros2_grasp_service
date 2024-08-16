@@ -1,4 +1,5 @@
 # Grasp service
+![iron](https://github.com/Wiktor-99/ros2_grasp_service/actions/workflows/build_and_test_iron.yaml/badge.svg)
 ![humble](https://github.com/Wiktor-99/ros2_grasp_service/actions/workflows/build_and_test_humble.yaml/badge.svg)
 
 Simple ros2 grasp service. The job of the service is to follow sequence of points, then close the gripper and stop and then back to home positions and open gripper.
