@@ -3,5 +3,5 @@ name: Lint
 description: Lint using devcontainer
 runs:
     using: docker
-    image: ../../../.devcontainer/Dockerfile
+    image: osrf/ros:iron-desktop
     entrypoint: .github/actions/lint/run.sh
