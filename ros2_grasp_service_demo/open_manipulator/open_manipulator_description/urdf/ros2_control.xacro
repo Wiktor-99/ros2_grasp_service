@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
   <gazebo>
-    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       <parameters>$(find open_manipulator_control)/config/controllers.yaml</parameters>
     </plugin>
   </gazebo>
@@ -19,7 +19,7 @@
 
   <ros2_control name="open_manipulator" type="system">
     <hardware>
-      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
 
     <xacro:manipulator_joint_command_by_position name="joint1" initial_value="0"/>
@@ -34,6 +34,7 @@
     <joint name="gripper_sub">
         <param name="mimic">gripper</param>
         <param name="multiplier">1</param>
+        <command_interface name="position"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
     </joint>

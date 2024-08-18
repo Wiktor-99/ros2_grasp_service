@@ -1,3 +1,5 @@
+# flake8: noqa
+
 # auto-generated DO NOT EDIT
 
 from rcl_interfaces.msg import ParameterDescriptor
@@ -35,6 +37,7 @@ class grasp_service_parameters:
             def add_entry(self, name):
                 if not hasattr(self, name):
                     setattr(self, name, self.__map_type())
+                return getattr(self, name)
 
             def get_entry(self, name):
                 return getattr(self, name)
@@ -51,6 +54,7 @@ class grasp_service_parameters:
             def add_entry(self, name):
                 if not hasattr(self, name):
                     setattr(self, name, self.__map_type())
+                return getattr(self, name)
 
             def get_entry(self, name):
                 return getattr(self, name)
@@ -85,10 +89,11 @@ class grasp_service_parameters:
             # TODO remove any destroyed dynamic parameters
 
             # declare any new dynamic parameters
-            for value in updated_params.positions_to_target_list:
-                updated_params.positions_to_target.add_entry(value)
-                entry = updated_params.positions_to_target.get_entry(value)
-                param_name = f"{self.prefix_}positions_to_target.{value}.positions"
+
+            for value_1 in updated_params.positions_to_target_list:
+                updated_params.positions_to_target.add_entry(value_1)
+                entry = updated_params.positions_to_target.get_entry(value_1)
+                param_name = f"{self.prefix_}positions_to_target.{value_1}.positions"
                 if not self.node_.has_parameter(self.prefix_ + param_name):
                     descriptor = ParameterDescriptor(
                         description="List of joints value for given position.", read_only=False
@@ -107,10 +112,11 @@ class grasp_service_parameters:
                         + validation_result,
                     )
                 entry.positions = param.value
-            for value in updated_params.positions_to_target_list:
-                updated_params.positions_to_target.add_entry(value)
-                entry = updated_params.positions_to_target.get_entry(value)
-                param_name = f"{self.prefix_}positions_to_target.{value}.time_to_target"
+
+            for value_1 in updated_params.positions_to_target_list:
+                updated_params.positions_to_target.add_entry(value_1)
+                entry = updated_params.positions_to_target.get_entry(value_1)
+                param_name = f"{self.prefix_}positions_to_target.{value_1}.time_to_target"
                 if not self.node_.has_parameter(self.prefix_ + param_name):
                     descriptor = ParameterDescriptor(description="Time for given position", read_only=False)
                     descriptor.integer_range.append(IntegerRange())
@@ -130,10 +136,11 @@ class grasp_service_parameters:
                         + validation_result,
                     )
                 entry.time_to_target = param.value
-            for value in updated_params.positions_to_home_list:
-                updated_params.positions_to_home.add_entry(value)
-                entry = updated_params.positions_to_home.get_entry(value)
-                param_name = f"{self.prefix_}positions_to_home.{value}.positions"
+
+            for value_1 in updated_params.positions_to_home_list:
+                updated_params.positions_to_home.add_entry(value_1)
+                entry = updated_params.positions_to_home.get_entry(value_1)
+                param_name = f"{self.prefix_}positions_to_home.{value_1}.positions"
                 if not self.node_.has_parameter(self.prefix_ + param_name):
                     descriptor = ParameterDescriptor(
                         description="List of joints value for given position.", read_only=False
@@ -152,10 +159,11 @@ class grasp_service_parameters:
                         + validation_result,
                     )
                 entry.positions = param.value
-            for value in updated_params.positions_to_home_list:
-                updated_params.positions_to_home.add_entry(value)
-                entry = updated_params.positions_to_home.get_entry(value)
-                param_name = f"{self.prefix_}positions_to_home.{value}.time_to_target"
+
+            for value_1 in updated_params.positions_to_home_list:
+                updated_params.positions_to_home.add_entry(value_1)
+                entry = updated_params.positions_to_home.get_entry(value_1)
+                param_name = f"{self.prefix_}positions_to_home.{value_1}.time_to_target"
                 if not self.node_.has_parameter(self.prefix_ + param_name):
                     descriptor = ParameterDescriptor(description="Time for given position", read_only=False)
                     descriptor.integer_range.append(IntegerRange())
@@ -241,42 +249,44 @@ class grasp_service_parameters:
 
             # update dynamic parameters
             for param in parameters:
-                for value in updated_params.positions_to_target_list:
-                    param_name = f"{self.prefix_}positions_to_target.{value}.positions"
+                for value_1 in updated_params.positions_to_target_list:
+                    param_name = f"{self.prefix_}positions_to_target{value_1}.positions"
                     if param.name == param_name:
                         validation_result = ParameterValidators.size_gt(param, 0)
                         if validation_result:
                             return SetParametersResult(successful=False, reason=validation_result)
-                        updated_params.positions_to_target.positions_to_target_list_map[value].positions = param.value
+
+                        updated_params.positions_to_target.get_entry(value_1).positions = param.value
                         self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
-                for value in updated_params.positions_to_target_list:
-                    param_name = f"{self.prefix_}positions_to_target.{value}.time_to_target"
+                for value_1 in updated_params.positions_to_target_list:
+                    param_name = f"{self.prefix_}positions_to_target{value_1}.time_to_target"
                     if param.name == param_name:
                         validation_result = ParameterValidators.gt(param, 0)
                         if validation_result:
                             return SetParametersResult(successful=False, reason=validation_result)
-                        updated_params.positions_to_target.positions_to_target_list_map[value].time_to_target = (
-                            param.value
-                        )
+
+                        updated_params.positions_to_target.get_entry(value_1).time_to_target = param.value
                         self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
-                for value in updated_params.positions_to_home_list:
-                    param_name = f"{self.prefix_}positions_to_home.{value}.positions"
+                for value_1 in updated_params.positions_to_home_list:
+                    param_name = f"{self.prefix_}positions_to_home{value_1}.positions"
                     if param.name == param_name:
                         validation_result = ParameterValidators.size_gt(param, 0)
                         if validation_result:
                             return SetParametersResult(successful=False, reason=validation_result)
-                        updated_params.positions_to_home.positions_to_home_list_map[value].positions = param.value
+
+                        updated_params.positions_to_home.get_entry(value_1).positions = param.value
                         self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
-                for value in updated_params.positions_to_home_list:
-                    param_name = f"{self.prefix_}positions_to_home.{value}.time_to_target"
+                for value_1 in updated_params.positions_to_home_list:
+                    param_name = f"{self.prefix_}positions_to_home{value_1}.time_to_target"
                     if param.name == param_name:
                         validation_result = ParameterValidators.gt(param, 0)
                         if validation_result:
                             return SetParametersResult(successful=False, reason=validation_result)
-                        updated_params.positions_to_home.positions_to_home_list_map[value].time_to_target = param.value
+
+                        updated_params.positions_to_home.get_entry(value_1).time_to_target = param.value
                         self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
             updated_params.stamp_ = self.clock_.now()
@@ -432,10 +442,11 @@ class grasp_service_parameters:
             updated_params.gripper_open = param.value
 
             # declare and set all dynamic parameters
-            for value in updated_params.positions_to_target_list:
-                updated_params.positions_to_target.add_entry(value)
-                entry = updated_params.positions_to_target.get_entry(value)
-                param_name = f"{self.prefix_}positions_to_target.{value}.positions"
+
+            for value_1 in updated_params.positions_to_target_list:
+                updated_params.positions_to_target.add_entry(value_1)
+                entry = updated_params.positions_to_target.get_entry(value_1)
+                param_name = f"{self.prefix_}positions_to_target.{value_1}.positions"
                 if not self.node_.has_parameter(self.prefix_ + param_name):
                     descriptor = ParameterDescriptor(
                         description="List of joints value for given position.", read_only=False
@@ -454,10 +465,11 @@ class grasp_service_parameters:
                         + validation_result,
                     )
                 entry.positions = param.value
-            for value in updated_params.positions_to_target_list:
-                updated_params.positions_to_target.add_entry(value)
-                entry = updated_params.positions_to_target.get_entry(value)
-                param_name = f"{self.prefix_}positions_to_target.{value}.time_to_target"
+
+            for value_1 in updated_params.positions_to_target_list:
+                updated_params.positions_to_target.add_entry(value_1)
+                entry = updated_params.positions_to_target.get_entry(value_1)
+                param_name = f"{self.prefix_}positions_to_target.{value_1}.time_to_target"
                 if not self.node_.has_parameter(self.prefix_ + param_name):
                     descriptor = ParameterDescriptor(description="Time for given position", read_only=False)
                     descriptor.integer_range.append(IntegerRange())
@@ -477,10 +489,11 @@ class grasp_service_parameters:
                         + validation_result,
                     )
                 entry.time_to_target = param.value
-            for value in updated_params.positions_to_home_list:
-                updated_params.positions_to_home.add_entry(value)
-                entry = updated_params.positions_to_home.get_entry(value)
-                param_name = f"{self.prefix_}positions_to_home.{value}.positions"
+
+            for value_1 in updated_params.positions_to_home_list:
+                updated_params.positions_to_home.add_entry(value_1)
+                entry = updated_params.positions_to_home.get_entry(value_1)
+                param_name = f"{self.prefix_}positions_to_home.{value_1}.positions"
                 if not self.node_.has_parameter(self.prefix_ + param_name):
                     descriptor = ParameterDescriptor(
                         description="List of joints value for given position.", read_only=False
@@ -499,10 +512,11 @@ class grasp_service_parameters:
                         + validation_result,
                     )
                 entry.positions = param.value
-            for value in updated_params.positions_to_home_list:
-                updated_params.positions_to_home.add_entry(value)
-                entry = updated_params.positions_to_home.get_entry(value)
-                param_name = f"{self.prefix_}positions_to_home.{value}.time_to_target"
+
+            for value_1 in updated_params.positions_to_home_list:
+                updated_params.positions_to_home.add_entry(value_1)
+                entry = updated_params.positions_to_home.get_entry(value_1)
+                param_name = f"{self.prefix_}positions_to_home.{value_1}.time_to_target"
                 if not self.node_.has_parameter(self.prefix_ + param_name):
                     descriptor = ParameterDescriptor(description="Time for given position", read_only=False)
                     descriptor.integer_range.append(IntegerRange())
