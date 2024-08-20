@@ -1,5 +1,5 @@
-FROM osrf/ros:iron-desktop
 ARG ROS_DISTRO=iron
+FROM osrf/ros:$ROS_DISTRO-desktop
 ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
@@ -35,16 +35,18 @@ RUN sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrin
     && rm -rf /var/lib/apt/lists/*
 
 ENV GZ_VERSION=harmonic
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh && \
-    mkdir -p /gz_ros2_control_ws/src && mkdir -p /gz_ros2_control_ws/src && \
-    cd /gz_ros2_control_ws/src && \
-    git clone --branch iron https://github.com/ros-controls/gz_ros2_control && \
-    cd /gz_ros2_control_ws && \
+ENV GZ_ROS2_CONTROL_PATH='/gz_ros2_control_ws'
+ENV GZ_ROS2_CONTROL_BRANCH='iron'
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
+    mkdir -p $GZ_ROS2_CONTROL_PATH/src && \
+    cd $GZ_ROS2_CONTROL_PATH/src && \
+    git clone --branch $GZ_ROS2_CONTROL_BRANCH https://github.com/ros-controls/gz_ros2_control && \
+    cd $GZ_ROS2_CONTROL_PATH && \
     colcon build
 
 ENV DEBIAN_FRONTEND=dialog
 
 ARG WORKSPACE
 RUN echo "if [ -f ${WORKSPACE}/install/setup.bash ]; then source ${WORKSPACE}/install/setup.bash; fi" >> /home/$USERNAME/.bashrc \
-    && echo "if [ -f /gz_ros2_control_ws/install/setup.bash ]; then source /gz_ros2_control_ws/install/setup.bash; fi" >> /home/$USERNAME/.bashrc
+    && echo "if [ -f $GZ_ROS2_CONTROL_PATH/install/setup.bash ]; then source $GZ_ROS2_CONTROL_PATH/install/setup.bash; fi" >> /home/$USERNAME/.bashrc
 RUN pip3 install pre-commit
