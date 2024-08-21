@@ -1,13 +1,20 @@
-from rclpy import init, spin_once, shutdown, spin
-from control_msgs.action import FollowJointTrajectory, GripperCommand
-from rclpy.node import Node
-from std_srvs.srv import Empty
-from rclpy.action import ActionClient
-from action_msgs.msg import GoalStatus
-from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
-from builtin_interfaces.msg import Duration
 from time import sleep
+
+from action_msgs.msg import GoalStatus
+
+from builtin_interfaces.msg import Duration
+
+from control_msgs.action import FollowJointTrajectory, GripperCommand
+
+from rclpy import init, shutdown, spin, spin_once
+from rclpy.action import ActionClient
+from rclpy.node import Node
+
 from ros2_grasp_service.grasp_service_parameters import grasp_service_parameters
+
+from std_srvs.srv import Empty
+
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 
 class FollowJointTrajectoryActionClient(Node):

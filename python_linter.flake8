@@ -1,3 +1,4 @@
 [flake8]
 exclude = .git,__pycache__,grasp_service_parameters.py, install/*, build/*
+extend-ignore = Q000, D100, D101, D104, D103, D102, D107
 max-line-length = 120
