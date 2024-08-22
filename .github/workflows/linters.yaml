@@ -15,8 +15,6 @@ jobs:
     lint:
         name: ament_${{ matrix.linter }}
         runs-on: ubuntu-latest
-        container:
-            image: ubuntu:jammy
         strategy:
             fail-fast: false
             matrix:
