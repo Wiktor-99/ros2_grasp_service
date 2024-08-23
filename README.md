@@ -1,4 +1,5 @@
 # Grasp service
+![jazzy](https://github.com/Wiktor-99/ros2_grasp_service/actions/workflows/build_and_test_jazzy.yaml/badge.svg)
 ![iron](https://github.com/Wiktor-99/ros2_grasp_service/actions/workflows/build_and_test_iron.yaml/badge.svg)
 ![humble](https://github.com/Wiktor-99/ros2_grasp_service/actions/workflows/build_and_test_humble.yaml/badge.svg)
 
