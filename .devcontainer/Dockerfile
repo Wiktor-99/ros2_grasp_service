@@ -1,4 +1,4 @@
-ARG ROS_DISTRO=jazzy
+ARG ROS_DISTRO=rolling
 FROM osrf/ros:$ROS_DISTRO-desktop
 ARG USERNAME=ros
 ARG USER_UID=1000
