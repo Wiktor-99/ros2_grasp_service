@@ -4,3 +4,4 @@ log/*
 site/*
 __pycache__/
 *.py[cod]
+grasp_service_parameters.py
