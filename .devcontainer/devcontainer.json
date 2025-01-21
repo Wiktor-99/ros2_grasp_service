@@ -1,4 +1,3 @@
-// See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
 	"dockerFile": "Dockerfile",
 	"build": {
@@ -16,7 +15,6 @@
 		"--volume=/mnt/wslg:/mnt/wslg",
 		"--ipc=host",
 		"--runtime=nvidia",
-		// uncomment to use intel iGPU
 		"--device=/dev/dri"
 	],
 	"containerEnv": {
@@ -29,23 +27,14 @@
 		"NVIDIA_VISIBLE_DEVICES": "all",
 		"QT_X11_NO_MITSHM": "1"
 	},
-	// Set *default* container specific settings.json values on container create.
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"althack.ament-task-provider",
-				"betwo.b2-catkin-tools",
-				"DotJoshJohnson.xml",
 				"ms-azuretools.vscode-docker",
-				"ms-iot.vscode-ros",
 				"ms-python.python",
 				"ms-vscode.cpptools",
-				"redhat.vscode-yaml",
 				"smilerobotics.urdf",
-				"streetsidesoftware.code-spell-checker",
-				"twxs.cmake",
-				"yzhang.markdown-all-in-one",
-				"zachflower.uncrustify"
+				"streetsidesoftware.code-spell-checker"
 			]
 		}
 	}
