@@ -30,10 +30,16 @@ RUN sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrin
     ros-$ROS_DISTRO-ros2-controllers \
     ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
     ros-$ROS_DISTRO-gripper-controllers \
-    ros-$ROS_DISTRO-gz-ros2-control \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh && \
+    mkdir -p /gz_ros2_control_ws/src && \
+    cd /gz_ros2_control_ws/src && \
+    git clone --branch $ROS_DISTRO https://github.com/ros-controls/gz_ros2_control && \
+    cd /gz_ros2_control_ws && \
+    colcon build
 ENV DEBIAN_FRONTEND=dialog
 
 ARG WORKSPACE
