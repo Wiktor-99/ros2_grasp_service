@@ -21,7 +21,7 @@ class FollowJointTrajectoryActionClient(Node):
     def __init__(self, joints_controller_name):
         super().__init__("send_trajectory_action")
         self.action_client = ActionClient(
-            self, FollowJointTrajectory, f"/{joints_controller_name}/follow_joint_trajectory"
+            self, FollowJointTrajectory, f"{joints_controller_name}/follow_joint_trajectory"
         )
         self.status = GoalStatus.STATUS_EXECUTING
 
@@ -49,7 +49,7 @@ class FollowJointTrajectoryActionClient(Node):
 class GripperActionClient(Node):
     def __init__(self, gripper_controller_name):
         super().__init__("gripper_action")
-        self.action_client = ActionClient(self, GripperCommand, f"/{gripper_controller_name}/gripper_cmd")
+        self.action_client = ActionClient(self, GripperCommand, f"{gripper_controller_name}/gripper_cmd")
         self.status = GoalStatus.STATUS_EXECUTING
 
     def send_goal(self, goal_msg):
