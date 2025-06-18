@@ -25,11 +25,12 @@ RUN sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrin
     && apt-get -y install \
     gz-harmonic \
     python3-pip pre-commit \
-    ros-$ROS_DISTRO-xacro ros-$ROS_DISTRO-ros2-control \
+    ros-$ROS_DISTRO-xacro \
+    ros-$ROS_DISTRO-ros2-control \
+    ros-$ROS_DISTRO-ros2-control-cmake \
     ros-$ROS_DISTRO-ros-gz \
     ros-$ROS_DISTRO-ros2-controllers \
     ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
-    ros-$ROS_DISTRO-gripper-controllers \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
