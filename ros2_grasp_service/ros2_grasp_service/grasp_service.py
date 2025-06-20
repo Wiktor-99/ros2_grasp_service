@@ -4,7 +4,7 @@ from action_msgs.msg import GoalStatus
 
 from builtin_interfaces.msg import Duration
 
-from control_msgs.action import FollowJointTrajectory, GripperCommand
+from control_msgs.action import FollowJointTrajectory, ParallelGripperCommand
 
 from rclpy import init, shutdown, spin, spin_once
 from rclpy.action import ActionClient
@@ -49,7 +49,7 @@ class FollowJointTrajectoryActionClient(Node):
 class GripperActionClient(Node):
     def __init__(self, gripper_controller_name):
         super().__init__("gripper_action")
-        self.action_client = ActionClient(self, GripperCommand, f"{gripper_controller_name}/gripper_cmd")
+        self.action_client = ActionClient(self, ParallelGripperCommand, f"{gripper_controller_name}/gripper_cmd")
         self.status = GoalStatus.STATUS_EXECUTING
 
     def send_goal(self, goal_msg):
@@ -143,8 +143,8 @@ class GraspService(Node):
         return goal_msg
 
     def create_gripper_msg(self, gripper_value):
-        msg = GripperCommand.Goal()
-        msg.command.position = gripper_value
+        msg = ParallelGripperCommand.Goal()
+        msg.command.position = [gripper_value]
 
         return msg
 

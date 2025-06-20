@@ -3,10 +3,12 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, RegisterEventHandler
+from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessExit
+from launch.substitutions import PathJoinSubstitution
 
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 
 import xacro
 
@@ -29,59 +31,48 @@ def generate_launch_description():
         emulate_tty=True,
     )
 
-    load_joint_state_broadcaster = ExecuteProcess(
-        cmd=[
-            "ros2",
-            "control",
-            "load_controller",
-            "--set-state",
-            "active",
-            "joint_state_broadcaster",
-        ],
-        output="screen",
-        emulate_tty=True,
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare("open_manipulator_control"),
+            "config",
+            "controllers.yaml",
+        ]
     )
 
-    load_joint_trajectory_controller = ExecuteProcess(
-        cmd=[
-            "ros2",
-            "control",
-            "load_controller",
-            "--set-state",
-            "active",
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster"],
+    )
+
+    joint_trajectory_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
             "joint_trajectory_controller",
+            "--param-file",
+            robot_controllers,
         ],
-        output="screen",
-        emulate_tty=True,
     )
 
-    load_gripper_controller = ExecuteProcess(
-        cmd=[
-            "ros2",
-            "control",
-            "load_controller",
-            "--set-state",
-            "active",
+    gripper_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
             "gripper_action_controller",
+            "--param-file",
+            robot_controllers,
         ],
-        output="screen",
-        emulate_tty=True,
     )
 
     return LaunchDescription(
         [
             robot_state_publisher,
-            load_joint_state_broadcaster,
+            joint_state_broadcaster_spawner,
             RegisterEventHandler(
                 event_handler=OnProcessExit(
-                    target_action=load_joint_state_broadcaster,
-                    on_exit=[load_joint_trajectory_controller],
-                )
-            ),
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=load_joint_trajectory_controller,
-                    on_exit=[load_gripper_controller],
+                    target_action=joint_state_broadcaster_spawner,
+                    on_exit=[joint_trajectory_controller_spawner, gripper_controller_spawner],
                 )
             ),
         ]
