@@ -5,9 +5,9 @@
       <real_time_factor>1</real_time_factor>
       <real_time_update_rate>1000</real_time_update_rate>
     </physics>
-    <plugin name='ignition::gazebo::systems::Physics' filename='libignition-gazebo-physics-system.so'/>
-    <plugin name='ignition::gazebo::systems::UserCommands' filename='libignition-gazebo-user-commands-system.so'/>
-    <plugin name='ignition::gazebo::systems::SceneBroadcaster' filename='libignition-gazebo-scene-broadcaster-system.so'/>
+    <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
+    <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
+    <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
     <scene>
       <ambient>1 1 1 1</ambient>
       <background>0.300000012 0.699999988 0.899999976 1</background>
@@ -54,7 +54,7 @@
       <self_collide>false</self_collide>
     </model>
     <include>
-      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Depot</uri>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Depot</uri>
       <name>Depot</name>
       <pose>7.1900899999999996 1.09982 0 0 0 0</pose>
     </include>
