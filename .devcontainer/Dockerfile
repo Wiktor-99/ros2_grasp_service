@@ -1,5 +1,5 @@
 ARG ROS_DISTRO=rolling
-FROM osrf/ros:$ROS_DISTRO-desktop
+FROM osrf/ros:$ROS_DISTRO-desktop-noble
 ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
@@ -23,10 +23,11 @@ RUN sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrin
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
     apt-get update --fix-missing \
     && apt-get -y install \
-    gz-harmonic \
     python3-pip pre-commit \
+    ros-${ROS_DISTRO}-ros-gz \
     ros-$ROS_DISTRO-xacro \
     ros-$ROS_DISTRO-ros2-control \
+    ros-$ROS_DISTRO-gz-ros2-control \
     ros-$ROS_DISTRO-ros2-control-cmake \
     ros-$ROS_DISTRO-ros-gz \
     ros-$ROS_DISTRO-ros2-controllers \
@@ -34,13 +35,6 @@ RUN sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrin
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-RUN . /opt/ros/${ROS_DISTRO}/setup.sh && \
-    mkdir -p /gz_ros2_control_ws/src && \
-    cd /gz_ros2_control_ws/src && \
-    git clone --branch $ROS_DISTRO https://github.com/ros-controls/gz_ros2_control && \
-    cd /gz_ros2_control_ws && \
-    colcon build
 ENV DEBIAN_FRONTEND=dialog
 
 ARG WORKSPACE
