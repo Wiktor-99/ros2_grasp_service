@@ -1,9 +1,15 @@
 <sdf version='1.10'>
   <world name='world_demo'>
-    <physics name='1ms' type='ignored'>
-      <max_step_size>0.01</max_step_size>
-      <real_time_factor>1</real_time_factor>
-      <real_time_update_rate>1000</real_time_update_rate>
+  <physics name="dart_basic" type="dart">
+    <max_step_size>0.002</max_step_size>
+    <real_time_update_rate>500</real_time_update_rate>
+    <real_time_factor>1</real_time_factor>
+      <dart>
+        <solver>
+          <solver_type>dantzig</solver_type>
+        </solver>
+        <collision_detector>fcl</collision_detector>
+      </dart>
     </physics>
     <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
     <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
